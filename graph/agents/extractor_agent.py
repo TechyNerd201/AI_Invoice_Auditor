@@ -13,7 +13,7 @@ import sys
 import json
 from log_utils.logger import get_logger
 from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage, AIMessage
-from langchain_groq import ChatGroq as ChatOpenAI
+from langchain_aws import ChatBedrock
 from langchain_core.tools import tool
 from langgraph.prebuilt import ToolNode, tools_condition
 from langgraph.graph import StateGraph, MessagesState, START, END
@@ -333,10 +333,10 @@ def _last_tool_messages(s: JobState) -> List[ToolMessage]:
 # Module-level LLM + tools (created once)
 # ---------------------------------------------------------------------------
 
-_llm = ChatOpenAI(
-    model=os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
-    api_key=os.getenv("GROQ_API_KEY"),
-    temperature=0,
+_llm = ChatBedrock(
+    model_id=os.getenv("AWS_BEDROCK_MODEL_ID", "amazon.nova-pro-v1:0"),
+    region_name=os.getenv("AWS_REGION", "us-east-1"),
+    model_kwargs={"temperature": 0},
 )
 _ext_tools = [extract_pdf_text, extract_pdf_tables, extract_line_items_from_table, ocr_image, extract_metadata]
 _llm_with_tools = _llm.bind_tools(_ext_tools)

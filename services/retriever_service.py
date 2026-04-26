@@ -8,8 +8,7 @@ from typing import List, Dict, Any
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from dotenv import load_dotenv
-from langchain_aws import BedrockEmbeddings
-from langchain_groq import ChatGroq as ChatOpenAI
+from langchain_aws import BedrockEmbeddings, ChatBedrock
 from langchain_core.messages import SystemMessage, HumanMessage
 from qdrant_client import QdrantClient
 from qdrant_client.models import Filter, FieldCondition, MatchValue
@@ -35,10 +34,10 @@ class RetrieverService:
             region_name=os.getenv("AWS_REGION", "us-east-1"),
         )
 
-        self.llm = ChatOpenAI(
-            model=os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
-            api_key=os.getenv("GROQ_API_KEY"),
-            temperature=0,
+        self.llm = ChatBedrock(
+            model_id=os.getenv("AWS_BEDROCK_MODEL_ID", "amazon.nova-pro-v1:0"),
+            region_name=os.getenv("AWS_REGION", "us-east-1"),
+            model_kwargs={"temperature": 0},
         )
 
         self.qdrant = QdrantClient(

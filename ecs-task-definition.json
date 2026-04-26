@@ -1,0 +1,41 @@
+{
+  "family": "invoice-auditor",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "2048",
+  "executionRoleArn": "arn:aws:iam::486336527723:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::486336527723:role/invoice-auditor-task-role",
+  "containerDefinitions": [
+    {
+      "name": "invoice-auditor",
+      "image": "486336527723.dkr.ecr.ap-south-1.amazonaws.com/invoice-auditor:latest",
+      "portMappings": [
+        {
+          "containerPort": 8000,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "secrets": [
+        {"name": "QDRANT_URL",                  "valueFrom": "arn:aws:secretsmanager:ap-south-1:486336527723:secret:invoice-auditor/config:QDRANT_URL::"},
+        {"name": "QDRANT_API_KEY",              "valueFrom": "arn:aws:secretsmanager:ap-south-1:486336527723:secret:invoice-auditor/config:QDRANT_API_KEY::"},
+        {"name": "QDRANT_COLLECTION",           "valueFrom": "arn:aws:secretsmanager:ap-south-1:486336527723:secret:invoice-auditor/config:QDRANT_COLLECTION::"},
+        {"name": "AWS_BEDROCK_MODEL_ID",        "valueFrom": "arn:aws:secretsmanager:ap-south-1:486336527723:secret:invoice-auditor/config:AWS_BEDROCK_MODEL_ID::"},
+        {"name": "AWS_BEDROCK_EMBEDDING_MODEL", "valueFrom": "arn:aws:secretsmanager:ap-south-1:486336527723:secret:invoice-auditor/config:AWS_BEDROCK_EMBEDDING_MODEL::"},
+        {"name": "S3_BUCKET",                   "valueFrom": "arn:aws:secretsmanager:ap-south-1:486336527723:secret:invoice-auditor/config:S3_BUCKET::"}
+      ],
+      "environment": [
+        {"name": "AWS_REGION", "value": "ap-south-1"}
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/invoice-auditor",
+          "awslogs-region": "ap-south-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}

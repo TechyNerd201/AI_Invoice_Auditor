@@ -8,7 +8,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_groq import ChatGroq as ChatOpenAI
+from langchain_aws import ChatBedrock
 from state import JobState
 from dotenv import load_dotenv
 from log_utils.logger import get_logger
@@ -28,10 +28,10 @@ def report_agent(state: JobState) -> Dict[str, Any]:
         events =[]
         events.append(SystemMessage(content=f"[reporting_agent] Starting. job_id={state.get('job_id')}"))
 
-        llm = ChatOpenAI(
-            model=os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
-            api_key=os.getenv("GROQ_API_KEY"),
-            temperature=0,
+        llm = ChatBedrock(
+            model_id=os.getenv("AWS_BEDROCK_MODEL_ID", "amazon.nova-pro-v1:0"),
+            region_name=os.getenv("AWS_REGION", "us-east-1"),
+            model_kwargs={"temperature": 0},
         )
 
         # Extract state data

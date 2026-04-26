@@ -11,7 +11,7 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from typing import Dict, Any
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_groq import ChatGroq as ChatOpenAI
+from langchain_aws import ChatBedrock
 from langgraph.prebuilt import ToolNode, tools_condition
 from langgraph.graph import StateGraph, START, END
 from state import JobState
@@ -328,11 +328,10 @@ def update_state_node(state: JobState) -> dict:
     }
 
 # Build and compile once at module load — avoids expensive recompilation per request
-_val_llm = ChatOpenAI(
-    model=os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
-    api_key=os.getenv("GROQ_API_KEY"),
-    temperature=0,
-    verbose=True,
+_val_llm = ChatBedrock(
+    model_id=os.getenv("AWS_BEDROCK_MODEL_ID", "amazon.nova-pro-v1:0"),
+    region_name=os.getenv("AWS_REGION", "us-east-1"),
+    model_kwargs={"temperature": 0},
 )
 _val_tools = [find_PO_records, find_vendor_records, find_sku_records, record_finding, addition, subtraction, multiplication, division]
 _val_llm_with_tools = _val_llm.bind_tools(_val_tools)
