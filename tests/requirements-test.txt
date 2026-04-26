@@ -1,0 +1,25 @@
+# Testing dependencies for AI Invoice Auditor
+# Install with: pip install -r tests/requirements-test.txt
+
+# Core testing
+pytest==7.4.3
+pytest-asyncio==0.23.2
+pytest-cov==4.1.0
+pytest-xdist==3.5.0
+pytest-timeout==2.2.0
+
+# API testing
+requests==2.31.0
+httpx==0.25.2
+
+# Mocking & fixtures
+pytest-mock==3.12.0
+responses==0.24.1
+
+# Reporting
+pytest-html==4.1.1
+allure-pytest==2.13.2
+
+# Utilities
+python-dotenv==1.0.0
+pydantic==2.5.3

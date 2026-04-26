@@ -1,0 +1,248 @@
+{
+  "info": {
+    "name": "AI Invoice Auditor API",
+    "description": "Test collection for AI Invoice Auditor API endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Upload Invoice",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "    var jsonData = pm.response.json();",
+              "    pm.environment.set('job_id', jsonData.job_id);",
+              "    pm.test('Job ID saved to environment', function() {",
+              "        pm.expect(jsonData.job_id).to.exist;",
+              "    });",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "invoice_file",
+              "type": "file",
+              "src": ""
+            },
+            {
+              "key": "metadata_file",
+              "type": "file",
+              "src": "",
+              "disabled": true
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/upload",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "upload"
+          ]
+        }
+      },
+      "description": "Upload invoice PDF and optional metadata JSON"
+    },
+    {
+      "name": "2. Check Job Status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/jobs/{{job_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "jobs",
+            "{{job_id}}"
+          ]
+        }
+      },
+      "description": "Check the status of uploaded job (poll this until status=completed)"
+    },
+    {
+      "name": "3. Get Audit Report (JSON)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/jobs/{{job_id}}/report",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "jobs",
+            "{{job_id}}",
+            "report"
+          ]
+        }
+      },
+      "description": "Get structured JSON audit report (only available when job status = completed)"
+    },
+    {
+      "name": "4. Get Audit Report (Markdown)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/jobs/{{job_id}}/report/markdown",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "jobs",
+            "{{job_id}}",
+            "report",
+            "markdown"
+          ]
+        }
+      },
+      "description": "Get full Markdown audit report with all details"
+    },
+    {
+      "name": "5. Query - What is the total?",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"query\": \"What is the total amount?\", \"job_id\": \"{{job_id}}\"}"
+        },
+        "url": {
+          "raw": "{{base_url}}/query",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "query"
+          ]
+        }
+      },
+      "description": "Query: Ask about the invoice total using RAG"
+    },
+    {
+      "name": "5b. Query - Who is the vendor?",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"query\": \"Who is the vendor?\", \"job_id\": \"{{job_id}}\"}"
+        },
+        "url": {
+          "raw": "{{base_url}}/query",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "query"
+          ]
+        }
+      },
+      "description": "Query: Ask about the vendor using RAG"
+    },
+    {
+      "name": "5c. Query - What is the PO number?",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"query\": \"What is the PO number?\", \"job_id\": \"{{job_id}}\"}"
+        },
+        "url": {
+          "raw": "{{base_url}}/query",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "query"
+          ]
+        }
+      },
+      "description": "Query: Ask about the PO number using RAG"
+    },
+    {
+      "name": "5d. Query - What is the invoice date?",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"query\": \"What is the invoice date?\", \"job_id\": \"{{job_id}}\"}"
+        },
+        "url": {
+          "raw": "{{base_url}}/query",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "query"
+          ]
+        }
+      },
+      "description": "Query: Ask about the invoice date using RAG"
+    },
+    {
+      "name": "API Docs",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/docs",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "docs"
+          ]
+        }
+      },
+      "description": "View interactive Swagger UI documentation"
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "job_id",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

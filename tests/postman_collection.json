@@ -1,0 +1,337 @@
+{
+  "info": {
+    "name": "AI Invoice Auditor API",
+    "description": "Complete test collection for AI Invoice Auditor API endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health & Docs",
+      "item": [
+        {
+          "name": "API Docs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/docs",
+              "host": ["{{base_url}}"],
+              "path": ["docs"]
+            }
+          },
+          "description": "View interactive Swagger UI documentation"
+        }
+      ]
+    },
+    {
+      "name": "1. Upload Invoice",
+      "item": [
+        {
+          "name": "Upload Invoice Only",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('job_id', jsonData.job_id);",
+                  "    pm.test('Job ID saved to environment', function() {",
+                  "        pm.expect(jsonData.job_id).to.exist;",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "invoice_file",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/upload",
+              "host": ["{{base_url}}"],
+              "path": ["upload"]
+            }
+          },
+          "description": "Upload a single invoice PDF file"
+        },
+        {
+          "name": "Upload Invoice with Metadata",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('job_id_metadata', jsonData.job_id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "invoice_file",
+                  "type": "file",
+                  "src": ""
+                },
+                {
+                  "key": "metadata_file",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/upload",
+              "host": ["{{base_url}}"],
+              "path": ["upload"]
+            }
+          },
+          "description": "Upload invoice PDF with optional metadata JSON/XML"
+        }
+      ]
+    },
+    {
+      "name": "2. Job Status",
+      "item": [
+        {
+          "name": "Check Job Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/jobs/{{job_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["jobs", "{{job_id}}"]
+            }
+          },
+          "description": "Check the status of uploaded job (poll until status=completed)"
+        },
+        {
+          "name": "Check Job Status (with Metadata)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/jobs/{{job_id_metadata}}",
+              "host": ["{{base_url}}"],
+              "path": ["jobs", "{{job_id_metadata}}"]
+            }
+          },
+          "description": "Check status of job with metadata"
+        }
+      ]
+    },
+    {
+      "name": "3. Reports",
+      "item": [
+        {
+          "name": "Get JSON Audit Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/jobs/{{job_id}}/report",
+              "host": ["{{base_url}}"],
+              "path": ["jobs", "{{job_id}}", "report"]
+            }
+          },
+          "description": "Get structured JSON audit report (only when job status = completed)"
+        },
+        {
+          "name": "Get Markdown Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/jobs/{{job_id}}/report/markdown",
+              "host": ["{{base_url}}"],
+              "path": ["jobs", "{{job_id}}", "report", "markdown"]
+            }
+          },
+          "description": "Get full Markdown audit report with all details"
+        }
+      ]
+    },
+    {
+      "name": "4. Queries",
+      "item": [
+        {
+          "name": "Query - Total Amount",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"query\": \"What is the total amount?\", \"job_id\": \"{{job_id}}\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/query",
+              "host": ["{{base_url}}"],
+              "path": ["query"]
+            }
+          },
+          "description": "Query about invoice total using RAG"
+        },
+        {
+          "name": "Query - Vendor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"query\": \"Who is the vendor?\", \"job_id\": \"{{job_id}}\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/query",
+              "host": ["{{base_url}}"],
+              "path": ["query"]
+            }
+          },
+          "description": "Query about vendor"
+        },
+        {
+          "name": "Query - PO Number",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"query\": \"What is the PO number?\", \"job_id\": \"{{job_id}}\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/query",
+              "host": ["{{base_url}}"],
+              "path": ["query"]
+            }
+          },
+          "description": "Query about PO number"
+        },
+        {
+          "name": "Query - Invoice Date",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"query\": \"What is the invoice date?\", \"job_id\": \"{{job_id}}\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/query",
+              "host": ["{{base_url}}"],
+              "path": ["query"]
+            }
+          },
+          "description": "Query about invoice date"
+        },
+        {
+          "name": "Query - Line Items",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"query\": \"What line items are included?\", \"job_id\": \"{{job_id}}\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/query",
+              "host": ["{{base_url}}"],
+              "path": ["query"]
+            }
+          },
+          "description": "Query about line items"
+        }
+      ]
+    },
+    {
+      "name": "Error Handling",
+      "item": [
+        {
+          "name": "Invalid Job ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/jobs/invalid-id-12345",
+              "host": ["{{base_url}}"],
+              "path": ["jobs", "invalid-id-12345"]
+            }
+          },
+          "description": "Test error handling for non-existent job"
+        },
+        {
+          "name": "Report Before Completion",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/jobs/{{job_id}}/report",
+              "host": ["{{base_url}}"],
+              "path": ["jobs", "{{job_id}}", "report"]
+            }
+          },
+          "description": "Try to get report before job completes (should return 404)"
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "job_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "job_id_metadata",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

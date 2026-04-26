@@ -1,0 +1,24 @@
+# Test outputs
+output/
+*.log
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Test data
+data/**/*.pdf
+data/**/*.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/

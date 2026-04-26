@@ -1,0 +1,70 @@
+# =============================================================
+# AI Invoice Auditor — .gitignore
+# =============================================================
+
+# ---------------- Python ----------------
+*/__pycache__/*
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.spec
+data_to_monitor/
+# ---------------- Virtual environment ----------------
+.venv/
+venv/
+env/
+ENV/
+
+# ---------------- Environment / secrets ----------------
+.env
+.env.*
+*.env
+!.env.example
+
+# ---------------- Logs ----------------
+
+*.log
+logs/app.log
+
+# ---------------- Uploaded invoice files ----------------
+uploads/
+
+# ---------------- Runtime job outputs ----------------
+runs/
+
+# ---------------- Audit reports (generated at runtime) ----------------
+outputs/
+audit_report_*.md
+audit_report_*.txt
+
+# ---------------- Data (sensitive invoices / ERP mock data) ----------------
+data/incoming/
+data/ERP_mockdata/
+
+# ---------------- Qdrant local storage (if run locally) ----------------
+qdrant_storage/
+
+# ---------------- IDE / editor ----------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ---------------- OS ----------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------------- Jupyter ----------------
+.ipynb_checkpoints/
+*.ipynb
+
+# ---------------- AWS credentials (never commit) ----------------
+.aws/
+credentials
